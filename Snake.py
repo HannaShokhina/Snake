@@ -61,7 +61,10 @@ c.grid()
 # Наводим фокус на Canvas, чтобы мы могли ловить нажатия клавиш
 c.focus_set()
 
-
+# создаем набор сегментов
+segments = [Segment(SEG_SIZE, SEG_SIZE),
+            Segment(SEG_SIZE * 2, SEG_SIZE),
+            Segment(SEG_SIZE * 3, SEG_SIZE)]
 
 # Запускаем окно
 root.mainloop()
