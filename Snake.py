@@ -12,9 +12,38 @@ SEG_SIZE = 20
 IN_GAME = True
 
 
+def create_block():
+    """ Создает блок в случайной позиции на карте """
+    global BLOCK
+    posx = SEG_SIZE * random.randint(1, (WIDTH-SEG_SIZE) / SEG_SIZE)
+    posy = SEG_SIZE * random.randint(1, (HEIGHT-SEG_SIZE) / SEG_SIZE)
+    # блок это кружочек красного цвета
+    BLOCK = c.create_oval(posx, posy,
+                          posx+SEG_SIZE, posy+SEG_SIZE,
+                          fill="red")
 
-#Сегмент змейки будет простым прямоугольником
-#созданным при помощи метода create_rectangle
+
+def main():
+    """ Handles game process """
+    global IN_GAME
+    if IN_GAME:
+        # Двигаем змейку
+        s.move()
+        # Определяем координаты головы
+        head_coords = c.coords(s.segments[-1].instance)
+        x1, y1, x2, y2 = head_coords
+        # Столкновение с границами экрана
+        if x2 > WIDTH or x1 < 0 or y1 < 0 or y2 > HEIGHT:
+            IN_GAME = False
+        # E# Поедание яблок
+        elif head_coords == c.coords(BLOCK):
+            s.add_segment()
+            c.delete(BLOCK)
+            create_block()
+
+            
+# Сегмент змейки будет простым прямоугольником
+# созданным при помощи метода create_rectangle
 # класса Canvas модуля tkinter.
 class Segment(object):
     """ Single snake segment """
@@ -50,13 +79,24 @@ class Snake(object):
                  x1+self.vector[0]*SEG_SIZE, y1+self.vector[1]*SEG_SIZE,
                  x2+self.vector[0]*SEG_SIZE, y2+self.vector[1]*SEG_SIZE)
 
+        # увеличение змейки
+        def add_segment(self):
+            """ Добавляет сегмент змейке """
+            # определяем последний сегмент
+            last_seg = c.coords(self.segments[0].instance)
+            # определяем координаты куда поставить следующий сегмент
+            x = last_seg[2] - SEG_SIZE
+            y = last_seg[3] - SEG_SIZE
+            # добавляем змейке еще один сегмент в заданных координатах
+            self.segments.insert(0, Segment(x, y))
+
 
 
 root = Tk()
-root.title("PythonicWay Snake")
+root.title("Snake")
 
 # создаем экземпляр класса Canvas (его мы еще будем использовать) и заливаем все зеленым цветом
-c = Canvas(root, width=WIDTH, height=HEIGHT, bg="#330000")
+c = Canvas(root, width=WIDTH, height=HEIGHT, bg="#003300")
 c.grid()
 # Наводим фокус на Canvas, чтобы мы могли ловить нажатия клавиш
 c.focus_set()
@@ -66,5 +106,9 @@ segments = [Segment(SEG_SIZE, SEG_SIZE),
             Segment(SEG_SIZE * 2, SEG_SIZE),
             Segment(SEG_SIZE * 3, SEG_SIZE)]
 
+# собственно змейка
+s = Snake(segments)
+
+create_block()
 # Запускаем окно
 root.mainloop()
