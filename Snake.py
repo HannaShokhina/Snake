@@ -1,4 +1,4 @@
-﻿from tkinter import *
+from tkinter import *
 import random
 
 # Globals
@@ -33,7 +33,22 @@ class Snake(object):
         # изначально змейка двигается вправо
         self.vector = self.mapping["Right"]
 
+    def move(self):
+        """ Двигает змейку в заданном направлении """
+        # перебираем все сегменты кроме первого
+        for index in range(len(self.segments)-1):
+            segment = self.segments[index].instance
+            x1, y1, x2, y2 = c.coords(self.segments[index+1].instance)
+            # задаем каждому сегменту позицию сегмента стоящего после него
+            c.coords(segment, x1, y1, x2, y2)
 
+        # получаем координаты сегмента перед "головой"
+        x1, y1, x2, y2 = c.coords(self.segments[-2].instance)
+
+        # помещаем "голову" в направлении указанном в векторе движения
+        c.coords(self.segments[-1].instance,
+                 x1+self.vector[0]*SEG_SIZE, y1+self.vector[1]*SEG_SIZE,
+                 x2+self.vector[0]*SEG_SIZE, y2+self.vector[1]*SEG_SIZE)
 
 
 
