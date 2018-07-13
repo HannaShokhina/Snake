@@ -61,10 +61,8 @@ class Snake(object):
             # добавляем змейке еще один сегмент в заданных координатах
             self.segments.insert(0, Segment(x, y))
 
-
-
 root = Tk()
-root.title("PythonicWay Snake")
+root.title("Snake")
 
 # создаем экземпляр класса Canvas (его мы еще будем использовать) и заливаем все зеленым цветом
 c = Canvas(root, width=WIDTH, height=HEIGHT, bg="#330000")
