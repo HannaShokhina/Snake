@@ -1,4 +1,4 @@
-﻿from tkinter import *
+from tkinter import *
 import random
 
 # Globals
@@ -33,7 +33,33 @@ class Snake(object):
         # изначально змейка двигается вправо
         self.vector = self.mapping["Right"]
 
+    def move(self):
+        """ Двигает змейку в заданном направлении """
+        # перебираем все сегменты кроме первого
+        for index in range(len(self.segments)-1):
+            segment = self.segments[index].instance
+            x1, y1, x2, y2 = c.coords(self.segments[index+1].instance)
+            # задаем каждому сегменту позицию сегмента стоящего после него
+            c.coords(segment, x1, y1, x2, y2)
 
+        # получаем координаты сегмента перед "головой"
+        x1, y1, x2, y2 = c.coords(self.segments[-2].instance)
+
+        # помещаем "голову" в направлении указанном в векторе движения
+        c.coords(self.segments[-1].instance,
+                 x1+self.vector[0]*SEG_SIZE, y1+self.vector[1]*SEG_SIZE,
+                 x2+self.vector[0]*SEG_SIZE, y2+self.vector[1]*SEG_SIZE)
+
+        # увеличение змейки
+        def add_segment(self):
+            """ Добавляет сегмент змейке """
+            # определяем последний сегмент
+            last_seg = c.coords(self.segments[0].instance)
+            # определяем координаты куда поставить следующий сегмент
+            x = last_seg[2] - SEG_SIZE
+            y = last_seg[3] - SEG_SIZE
+            # добавляем змейке еще один сегмент в заданных координатах
+            self.segments.insert(0, Segment(x, y))
 
 
 
@@ -46,7 +72,13 @@ c.grid()
 # Наводим фокус на Canvas, чтобы мы могли ловить нажатия клавиш
 c.focus_set()
 
+# создаем набор сегментов
+segments = [Segment(SEG_SIZE, SEG_SIZE),
+            Segment(SEG_SIZE * 2, SEG_SIZE),
+            Segment(SEG_SIZE * 3, SEG_SIZE)]
 
+# собственно змейка
+s = Snake(segments)
 
 # Запускаем окно
 root.mainloop()
